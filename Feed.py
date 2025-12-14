@@ -17,8 +17,6 @@ def current_unix_time() -> int:
 
 
 class Feed:
-    _SUMMARISE_PROMPT = "Summarise the following website in dot points, with a link afterwards to the website."
-
     _HEADERS = {
         "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
     }
@@ -31,6 +29,7 @@ class Feed:
         rss_urls: PickleDictionary,
         last_saved_times: PickleDictionary,
         monthly_entries: PickleDictionary,
+        wrappers: dict[str, str],
     ) -> None:
         self._feed_url = feed_item["url"]
         self._rss_url = self._get_rss_url(rss_urls)
@@ -40,7 +39,7 @@ class Feed:
         self._blacklist_regex = None
         self._whitelist_regex = None
         self._allowed_languages = None
-        self._summarise = False
+        self._wrappers = []
 
         if "blacklist_regex" in feed_item:
             self._blacklist_regex = feed_item["blacklist_regex"]
@@ -51,8 +50,8 @@ class Feed:
         if "allowed_languages" in feed_item:
             self._allowed_languages = feed_item["allowed_languages"]
 
-        if "summarise" in feed_item:
-            self._summarise = feed_item["summarise"]
+        if "wrappers" in feed_item:
+            self._wrappers = [wrappers[name] for name in feed_item["wrappers"]]
 
     def _get_rss_url(self, rss_urls: PickleDictionary) -> str:
         # Find RSS file from cache
@@ -115,10 +114,7 @@ class Feed:
         # Process entries
         for entry_tag in entry_tags:
             # Create entry
-            if self._summarise is False:
-                entry = Entry(entry_tag)
-            else:
-                entry = Entry(entry_tag, self._SUMMARISE_PROMPT)
+            entry = Entry(entry_tag, self._wrappers)
 
             # Don't count or save entry if title matches blacklist_regex
             if self._blacklist_regex and re.search(self._blacklist_regex, entry.title):

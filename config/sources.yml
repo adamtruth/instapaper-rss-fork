@@ -1,6 +1,10 @@
 - name: News
   sources:
   - feeds:
+    - url: https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml
+      wrappers:
+      - archive
+  - feeds:
     - url: https://www.youtube.com/@TLDRbusiness
     - url: https://www.youtube.com/@TLDRdaily
     - url: https://www.youtube.com/@TLDRnews
@@ -15,7 +19,8 @@
   sources:
   - feeds:
     - url: https://blog.unicode.org/feeds/posts/default?alt=rss
-      summarise: true
+      wrappers:
+      - summarise
   - feeds:
     - url: https://gavindou.ch/blog/feed.rss
   - feeds:
@@ -40,6 +45,10 @@
       allowed_languages:
       - en
   - feeds:
+    - url: https://www.hdblog.it/feed/
+      wrappers:
+      - en_translate
+  - feeds:
     - url: https://www.raspberrypi.com/news/feed/
     - url: https://www.reddit.com/r/raspberry_pi/top.rss?t=month
 - name: Music
@@ -47,3 +56,7 @@
   - feeds:
     - url: https://www.youtube.com/@Flume
       whitelist_regex: Official Music Video
+- name: Testing
+  sources:
+  - feeds:
+    - url: https://lorem-rss.herokuapp.com/feed

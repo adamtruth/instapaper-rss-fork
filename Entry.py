@@ -1,4 +1,3 @@
-import urllib.parse
 from datetime import datetime, timezone
 from time import mktime
 
@@ -23,16 +22,21 @@ def date_string_to_unix_timestamp(date_string: str) -> int:
 
 
 class Entry:
-    def __init__(self, entry_tag: Tag, prompt: str = "") -> None:
+    def __init__(
+        self,
+        entry_tag: Tag,
+        wrappers: list[str] | None = None,
+    ) -> None:
         self._entry_tag = entry_tag
-        self._prompt = prompt
+        self._wrappers = wrappers or []
 
         try:
             self.title = entry_tag.findNext("title").text.strip()
         except AttributeError:
             self.title = ""
 
-        self.url = self._get_url()
+        base_url = self._get_url()
+        self.url = self._apply_wrappers(base_url)
         self.publish_time = self._get_publish_time()
 
     def _get_publish_time(self) -> int:
@@ -77,10 +81,16 @@ class Entry:
                 "https://www.youtube.com/shorts/", "https://www.youtube.com/watch?v="
             )
 
-        # Add prompt
-        if self._prompt != "":
-            url = "https://www.perplexity.ai/search/?q=" + urllib.parse.quote(
-                self._prompt + "\n\n" + self.title + "\n\n" + url
-            )
-
         return url
+
+    def _apply_wrappers(self, url: str) -> str:
+        final_url = url
+
+        for wrapper_template in self._wrappers:
+            if "{url}" not in wrapper_template:
+                raise ValueError("Wrapper template is missing the '{url}' placeholder")
+
+            # Insert the URL directly without URL-encoding
+            final_url = wrapper_template.replace("{url}", final_url)
+
+        return final_url

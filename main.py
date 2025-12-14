@@ -16,6 +16,18 @@ try:
 except FileNotFoundError:
     _settings = {}
 
+# Load wrappers from YAML
+try:
+    with open("config/wrappers.yml", "r") as wrappers_file:
+        _wrappers = yaml.safe_load(wrappers_file) or {}
+except FileNotFoundError:
+    _wrappers = {}
+
+if not isinstance(_wrappers, dict):
+    raise ValueError(
+        "config/wrappers.yml must contain a mapping of wrapper names to URL templates"
+    )
+
 TESTING_MODE = _settings.get("testing_mode")
 MAX_SKIPS = _settings.get("max_skips")
 FREQUENT_FEED_THRESHOLD = _settings.get("frequent_feed_threshold")
@@ -32,6 +44,7 @@ def process_feed_list(
     rss_urls: PickleDictionary,
     monthly_entries: PickleDictionary,
     feed_scans: PickleDictionary,
+    wrappers: dict[str, str],
 ) -> None:
     saving_queue = SavingQueue(TESTING_MODE)
 
@@ -49,7 +62,7 @@ def process_feed_list(
             continue
 
         # Process feed
-        feed = Feed(feed_item, rss_urls, last_saved_times, monthly_entries)
+        feed = Feed(feed_item, rss_urls, last_saved_times, monthly_entries, wrappers)
         feed.process_feed(saving_queue)
         print(f"Processed feed {feed_item['url']}")
 
@@ -75,7 +88,7 @@ def main() -> None:
 
     # Process feed list
     process_feed_list(
-        feed_list, last_saved_times, rss_urls, monthly_entries, feed_scans
+        feed_list, last_saved_times, rss_urls, monthly_entries, feed_scans, _wrappers
     )
 
     # Pickle data
