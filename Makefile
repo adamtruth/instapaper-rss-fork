@@ -12,7 +12,7 @@ run: ## Run the main program
 
 .PHONY: test
 test: ## Run tests
-	uv run python test.py
+	uv run pytest -q
 
 .PHONY: deploy
 deploy: ## Deploy to remote server
@@ -45,4 +45,4 @@ format: ## Format code and sources.yml
 
 .PHONY: clean
 clean: ## Clean up temporary files
-	rm -rf __pycache__ .ruff_cache .venv
+	rm -rf __pycache__ */__pycache__ .ruff_cache .venv
