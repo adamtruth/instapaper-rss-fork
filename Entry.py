@@ -31,7 +31,7 @@ class Entry:
         self._wrappers = wrappers or []
 
         try:
-            self.title = entry_tag.findNext("title").text.strip()
+            self.title = entry_tag.find_next("title").text.strip()
         except AttributeError:
             self.title = ""
 
@@ -71,9 +71,9 @@ class Entry:
 
     def _get_url(self) -> str:
         # Get URL
-        url = self._entry_tag.findNext("link").get("href")
+        url = self._entry_tag.find_next("link").get("href")
         if url is None:
-            url = self._entry_tag.findNext("link").text
+            url = self._entry_tag.find_next("link").text
 
         # Convert YouTube Shorts links to regular video links
         if url.startswith("https://www.youtube.com/shorts/"):
