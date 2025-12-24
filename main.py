@@ -1,4 +1,6 @@
 import math
+import os
+import sys
 from hashlib import sha256
 from typing import List
 
@@ -31,6 +33,7 @@ if not isinstance(_wrappers, dict):
 TESTING_MODE = _settings.get("testing_mode")
 MAX_SKIPS = _settings.get("max_skips")
 FREQUENT_FEED_THRESHOLD = _settings.get("frequent_feed_threshold")
+LOCK_FILE = ".running.lock"
 
 
 def url_mod(url: str, mod: int) -> int:
@@ -100,4 +103,18 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    # Create lock file
+    if os.path.exists(LOCK_FILE):
+        print(f"Lock file {LOCK_FILE} exists. Another instance may be running.")
+        sys.exit(1)
+
+    try:
+        # Create lock file with PID
+        with open(LOCK_FILE, "w") as f:
+            f.write(str(os.getpid()))
+
+        main()
+    finally:
+        # Clean up lock file
+        if os.path.exists(LOCK_FILE):
+            os.remove(LOCK_FILE)

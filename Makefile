@@ -19,6 +19,14 @@ deploy: ## Deploy to remote server
 deploy: format test clean
 	ssh-copy-id ${REMOTE_LOGIN_IDENTIFIER}
 
+	# Check for lock file
+	@echo "Checking if script is currently running..."
+	@ssh ${REMOTE_LOGIN_IDENTIFIER} \
+		"if [ -f ${REMOTE_PATH}/.running.lock ]; then \
+			echo 'Error: Lock file exists. Script is currently running. Aborting deployment.'; \
+			exit 1; \
+		fi" || exit 1
+
 	# Download pickles from remote
 	-scp \
 		-r ${REMOTE_LOGIN_IDENTIFIER}:${REMOTE_PATH}/pickles \
@@ -45,4 +53,4 @@ format: ## Format code and sources.yml
 
 .PHONY: clean
 clean: ## Clean up temporary files
-	rm -rf __pycache__ */__pycache__ .ruff_cache .venv
+	rm -rf __pycache__ */__pycache__ .pytest_cache .ruff_cache .venv

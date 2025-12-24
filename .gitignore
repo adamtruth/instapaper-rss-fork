@@ -3,6 +3,7 @@ __pycache__/
 
 # Lock files
 uv.lock
+.running.lock
 
 # Environments
 .env
