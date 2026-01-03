@@ -14,7 +14,7 @@ In the `config/sources.yml` the following attributes may be used:
 
 | Attribute | Description | Required |
 | - | - | - |
-| `url` | The URL to the RSS file, or a webpage which has an RSS file in it | Required |
+| `url` | The URL to the RSS feed, a webpage which has an RSS feed, or an Instagram profile | Required |
 | `description` | A description of what the source is | Optional |
 | `wrappers` | Ordered list of wrapper names to apply to the entry URL | Optional |
 | `blacklist_regex` | A regex pattern to match against the title of the RSS item. If it matches, the item will not be saved | Optional |

@@ -1,6 +1,8 @@
 import os
 import tempfile
 
+import Feed as Feed_mod
+import request as request_mod
 from Feed import Feed
 from PickleDictionary import PickleDictionary
 
@@ -72,9 +74,8 @@ def test_feed_processes_entries_and_updates_time(monkeypatch):
             return DummyResponse(rss)
         return DummyResponse(html, path_url="/index.html")
 
-    import request as request_mod
-
     monkeypatch.setattr(request_mod, "request", fake_request)
+    monkeypatch.setattr(Feed_mod, "request", fake_request)
 
     feed_item = {"url": "https://example.com"}
     rss_urls = PickleDictionary(_get_temp_filename())

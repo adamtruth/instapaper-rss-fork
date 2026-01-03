@@ -1,6 +1,8 @@
 - name: News
   sources:
   - feeds:
+    - url: https://www.instagram.com/thenewdaily
+  - feeds:
     - url: https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml
       wrappers:
       - archive
