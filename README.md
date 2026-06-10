@@ -1,5 +1,4 @@
 # Instapaper RSS
-
 Subscribe to RSS/Atom feeds and save items to [Instapaper](https://www.instapaper.com/).
 
 ## Quick start
@@ -21,6 +20,7 @@ In the `config/sources.yml` the following attributes may be used:
 | `blacklist_regex` | A regex pattern to match against the title of the RSS item. If it matches, the item will not be saved | Optional |
 | `whitelist_regex` | A regex pattern to match against the title of the RSS item. If it matches, the item will be saved | Optional |
 | `allowed_languages` | A list of allowable languages for the RSS item's title to be writen in, in order to be saved | Optional |
+| `folder` | Articles will be saved and moved to a specified folder, if `use_folders` is true in `config/settings.yml` | Optional |
 
 ## Wrappers
 
@@ -38,6 +38,7 @@ The application reads configuration values from `config/settings.yml`. The follo
 
 - `testing_mode`: When true the program will not actually save entries to Instapaper; it will only print what it would do. Useful for development and testing.
 - `default_priority`: Priority name to use for feeds that do not set `priority` explicitly in `config/sources.yml`.
+- `use_folder`: When true the program can save entries to a specified folder. The folders are specified in `config/folders.yml`.
 
 Priority rules are defined in `config/priorities.yml`. Each priority is a mapping with:
 
@@ -74,6 +75,30 @@ low:
 ```
 
 You can add your own priorities by editing `config/priorities.yml` and then referencing the new priority name from `config/sources.yml`.
+
+### Folders
+You can use folders to store articles in a specific folder, and those articles will **will not appear on the main feed**.
+
+
+Folders are accessed via a `folder_id`, to obtain this navigate to the URL of the folder.
+
+Extract the `folder_id` from the URL: `https://instapaper.com/u/folder/{folder_id}/blogs`
+
+Add `folder_name`and `folder_id` in`config/folders.yml`: 
+
+```yaml
+folders:
+  - folder_name: "Blogs"
+    folder_id: "54321"
+```
+
+Add to a feed in `config/sources.yml`: 
+
+```yaml
+- feeds:
+    - url: https://gavindou.ch/blog/feed.rss
+      folder: "Blogs"
+```
 
 ## Setting up Auto-run
 

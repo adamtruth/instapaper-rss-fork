@@ -4,10 +4,10 @@ from bs4 import BeautifulSoup
 from Entry import Entry, date_string_to_unix_timestamp
 
 
-def make_entry(xml: str, wrappers=None) -> Entry:
+def make_entry(xml: str, wrappers=None, folder=None) -> Entry:
     soup = BeautifulSoup(xml, features="xml")
     tag = soup.find("entry") or soup.find("item")
-    return Entry(tag, wrappers)
+    return Entry(tag, wrappers, folder=folder)
 
 
 def test_entry_title_parsing():
@@ -72,6 +72,30 @@ def test_wrapper_missing_placeholder_raises():
     """
     with pytest.raises(ValueError):
         make_entry(xml, ["https://bad-wrapper/"])
+
+
+ITEM_XML = """
+<item>
+  <title>Test</title>
+  <link>https://example.com/post</link>
+  <pubDate>Tue, 02 Jan 2024 03:04:05 +0000</pubDate>
+</item>
+"""
+
+
+def test_entry_folder_defaults_to_none():
+    e = make_entry(ITEM_XML)
+    assert e.folder is None
+
+
+def test_entry_folder_is_set():
+    e = make_entry(ITEM_XML, folder="Tech")
+    assert e.folder == "Tech"
+
+
+def test_entry_folder_does_not_affect_url():
+    e = make_entry(ITEM_XML, folder="Tech")
+    assert e.url == "https://example.com/post"
 
 
 def test_date_string_parsing_atom_and_rss():

@@ -26,9 +26,11 @@ class Entry:
         self,
         entry_tag: Tag,
         wrappers: list[str] | None = None,
+        folder: str | None = None,
     ) -> None:
         self._entry_tag = entry_tag
         self._wrappers = wrappers or []
+        self.folder = folder
 
         try:
             self.title = entry_tag.find_next("title").text.strip()

@@ -1,2 +1,3 @@
 testing_mode: false
 default_priority: normal
+use_folders: false

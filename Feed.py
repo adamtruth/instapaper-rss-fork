@@ -61,6 +61,8 @@ class Feed:
         if "wrappers" in feed_item:
             self._wrappers = [wrappers[name] for name in feed_item["wrappers"]]
 
+        self._folder: str | None = feed_item.get("folder")
+
     def _get_rss_url(self, rss_urls: PickleDictionary) -> str:
         if self._is_instagram_profile():
             rss_urls[self._feed_url] = self._feed_url
@@ -123,7 +125,10 @@ class Feed:
         # Parse RSS
         rss_xml = BeautifulSoup(rss_link.text, features="xml")
         entry_tags = rss_xml.find_all("entry") + rss_xml.find_all("item")
-        entries = [Entry(entry_tag, self._wrappers) for entry_tag in entry_tags]
+        entries = [
+            Entry(entry_tag, self._wrappers, self._folder)
+            for entry_tag in entry_tags
+        ]
         self._process_entries(entries, saving_queue)
 
     def _process_entries(self, entries: list[Entry], saving_queue: SavingQueue) -> None:
@@ -217,7 +222,7 @@ class Feed:
             if entry_tag is None:
                 continue
 
-            entries.append(Entry(entry_tag, self._wrappers))
+            entries.append(Entry(entry_tag, self._wrappers, self._folder))
 
         return entries
 

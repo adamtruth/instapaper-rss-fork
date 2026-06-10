@@ -1,0 +1,5 @@
+# Enable usage of folders in settings.yml
+folders:
+  - folder_name: "Test Examples"
+    folder_id: "123456"
+

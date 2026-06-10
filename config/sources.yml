@@ -65,3 +65,4 @@
   - feeds:
     - url: https://lorem-rss.herokuapp.com/feed
       priority: high
+      folder: "Test Examples"
